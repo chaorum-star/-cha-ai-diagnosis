@@ -28,6 +28,7 @@ function elementFor(selector) {
 }
 
 const storage = new Map();
+const scrollCalls = [];
 const context = {
   console,
   Math,
@@ -39,7 +40,7 @@ const context = {
     querySelector: elementFor,
     querySelectorAll: () => []
   },
-  window: { scrollTo() {} },
+  window: { scrollY: 0, scrollTo(options) { scrollCalls.push(options); } },
   localStorage: {
     getItem: key => storage.get(key) ?? null,
     setItem: (key, value) => storage.set(key, value),
@@ -64,6 +65,13 @@ function assert(condition, message) {
 
 assert(elements.get('#screen').innerHTML.includes('매주 되풀이하던 일을 줄이고'), 'intro did not render');
 assert(!elements.get('#screen').innerHTML.includes('AI 직원'), 'customer-facing intro still uses AI 직원');
+
+const sceneState = { ...context.__test.initialState(), phase: 'scene', business: '베이킹 클래스', scene: '문의·상담·예약을 여러 채널에서 확인하고 답변해요' };
+context.__test.setState(sceneState);
+context.__test.render();
+context.window.scrollY = 640;
+context.__test.render();
+assert(scrollCalls.at(-1)?.top === 640, 'same-screen render should preserve the current scroll position');
 
 const high = Object.assign(context.__test.blankTask(), {
   name: '상담 문의 답변', minutes: 60, freq: 4,
@@ -116,6 +124,13 @@ const resultState = {
   tasks: [high, task2, task3], selectedIds: ['task1', 'task2', 'task3'],
   selectionInitialized: true, deepIndex: 2
 };
+context.__test.setState({ ...resultState, phase: 'detail' });
+context.__test.render();
+const detailHtml = elements.get('#screen').innerHTML;
+assert((detailHtml.match(/data-detail-key=/g) || []).length === 7, 'detail should render seven choice fields');
+assert((detailHtml.match(/<select/g) || []).length >= 7, 'detail fields should be selects');
+assert(!detailHtml.includes('<textarea'), 'long detail textarea still renders');
+
 context.__test.setState(resultState);
 context.__test.render();
 const resultHtml = elements.get('#screen').innerHTML;
@@ -124,10 +139,14 @@ assert(resultHtml.includes('갑자기 수업 신청이 아닙니다'), 'soft con
 assert(!resultHtml.includes('undefined') && !resultHtml.includes('NaN'), 'result contains undefined or NaN');
 
 const textControls = [...html.matchAll(/<(input|textarea)\b[^>]*>/g)].map(match => match[0]);
-assert(textControls.length >= 6, 'expected text controls not found');
+assert(textControls.length >= 3, 'expected short text controls not found');
 for (const control of textControls) {
   assert(/placeholder=/.test(control), `text control missing placeholder: ${control}`);
 }
+assert(!html.includes('<textarea'), 'page should not ask for long free-text answers');
+
+const scoreBinding = scriptMatch[1].match(/document\.querySelectorAll\('\[data-score-key\]'\)[\s\S]*?const apps=/)?.[0] || '';
+assert(scoreBinding && !scoreBinding.includes('render()'), 'score selection still re-renders and can jump to the first question');
 
 const blankTargets = [...html.matchAll(/<a\b[^>]*target="_blank"[^>]*>/g)].map(match => match[0]);
 for (const anchor of blankTargets) {

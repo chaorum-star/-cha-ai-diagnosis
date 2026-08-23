@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="description" content="매주 반복되는 업무에서 먼저 줄여볼 일을 근거와 함께 찾는 차팀장 무료 진단">
-  <meta name="app-version" content="9.0.0">
+  <meta name="app-version" content="9.1.0">
   <title>차팀장 · 내 업무에서 먼저 줄일 일 찾기</title>
   <style>
     @font-face{font-family:Paperlogy;src:url('./assets/fonts/Paperlogy-6SemiBold.ttf') format('truetype');font-weight:600;font-display:swap}
@@ -110,12 +110,17 @@
     .candidate.on .check{background:var(--coral);border-color:var(--coral);color:#fff}
     .candidate b{display:block;font-size:17px;margin-bottom:5px}
     .candidate small{font-size:12px;line-height:1.55;color:var(--muted)}
-    .context{margin-bottom:18px;padding:16px;border-radius:14px;background:var(--ink);color:#fff}
+    .context{position:relative;overflow:hidden;margin-bottom:18px;padding:18px 70px 18px 18px;border:2px solid var(--ink);border-radius:16px;background:var(--ink);color:#fff;box-shadow:7px 7px 0 var(--coral)}
+    .context:after{content:"";position:absolute;right:-22px;top:-27px;width:92px;height:92px;border:15px solid var(--coral);border-radius:50%;opacity:.92}
     .context small{display:block;color:#d5d1cb;font-size:12px;margin-bottom:5px}
     .context strong{font-size:20px;line-height:1.4}
-    .diagnosis-group{margin:17px 0;padding:17px 0;border-top:1px solid var(--line)}
-    .diagnosis-group:first-of-type{border-top:0}
-    .diagnosis-group h3{font-size:18px;margin-bottom:6px}
+    .diagnosis-stack{display:grid;gap:12px;margin-top:28px}
+    .diagnosis-group{margin:0;padding:18px;border:1.5px solid var(--line);border-left:6px solid var(--ink);border-radius:15px;background:#fff}
+    .diagnosis-group.tone{border-left-color:var(--coral);background:#fff3ef}
+    .question-title{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start}
+    .question-index{width:34px;height:34px;border-radius:10px;background:var(--ink);color:#fff;display:grid;place-items:center;font:800 11px/1 Pretendard,sans-serif}
+    .diagnosis-group.tone .question-index{background:var(--coral)}
+    .diagnosis-group h3{font-size:18px;margin:4px 0 7px}
     .diagnosis-group p{font-size:13px;line-height:1.55;color:var(--muted);margin-bottom:11px}
     .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
     .seg button{min-height:52px;border:1.5px solid #d2c9c0;border-radius:11px;background:#fff;padding:10px 7px;font-size:13px;line-height:1.32;font-weight:800;cursor:pointer}
@@ -127,8 +132,11 @@
     .detail-box{background:#fff;border:1.5px solid var(--line);border-radius:15px;padding:15px}
     .detail-box label{display:block;font-size:16px;font-weight:800;margin-bottom:5px}
     .detail-box p{font-size:12px;line-height:1.55;color:var(--muted);margin:0 0 9px}
-    .detail-box textarea{width:100%;min-height:90px;border:1.5px solid #d2c9c0;border-radius:11px;background:#fff;padding:13px;font-size:15px;line-height:1.55;resize:vertical;outline:0}
-    .detail-box textarea:focus{border-color:var(--coral);box-shadow:0 0 0 3px rgba(255,90,69,.1)}
+    .detail-box select{width:100%;min-height:54px;border:1.5px solid #d2c9c0;border-radius:11px;background:#fff;color:var(--ink);padding:13px 42px 13px 13px;font-size:15px;line-height:1.45;outline:0}
+    .detail-box select:focus{border-color:var(--coral);box-shadow:0 0 0 3px rgba(255,90,69,.1)}
+    .choice-guide{display:flex;align-items:center;gap:8px;margin:16px 0 2px;padding:12px 14px;border:1.5px dashed #bfb5aa;border-radius:13px;background:#fff}
+    .choice-guide b{font-size:13px}
+    .choice-guide span{color:var(--muted);font-size:12px;line-height:1.5}
     .result-hero{background:var(--ink);color:#fff;border:2px solid var(--ink);border-radius:20px;padding:26px 22px;box-shadow:9px 9px 0 var(--coral);margin-bottom:34px}
     .result-hero .eyebrow{color:#ffb2a7}
     .result-hero h1{font-size:clamp(42px,8vw,58px);margin-bottom:14px}
@@ -223,7 +231,7 @@
       <div class="brandline">
         <span class="brandmark">차</span>
         <span class="brandname" id="brandTitle">차팀장 무료 업무 진단</span>
-        <span class="version">v9.0</span>
+        <span class="version">v9.1</span>
       </div>
       <div class="progress" aria-label="진단 진행률"><i id="progressBar"></i></div>
     </div>
@@ -244,6 +252,20 @@
       {v:2,label:'주 1회',mul:1},
       {v:3,label:'주 2~4회',mul:3},
       {v:4,label:'거의 매일',mul:5}
+    ];
+    const SCENES=[
+      '문의·상담·예약을 여러 채널에서 확인하고 답변해요',
+      '콘텐츠 자료를 모아 기획하고 초안을 만들어요',
+      '주문·재고·정산 숫자를 여러 화면에서 옮겨요',
+      '일정·링크·리마인드를 반복해서 안내해요',
+      '자료·회의·보고 내용을 모아서 다시 정리해요'
+    ];
+    const APP_FLOWS=[
+      '한 곳에서 확인하고 끝나요',
+      '메시지 → 예약표·캘린더',
+      '메시지 → 문서·시트',
+      '여러 사이트 → 한 문서',
+      '앱·사이트 3곳 이상을 오가요'
     ];
     const REVIEWS=[
       {
@@ -274,14 +296,23 @@
     function blankTask(){return {id:uid(),name:'',minutes:'',freq:0,pattern:0,transfer:0,risk:0,data:0,criteria:0,exceptions:0,approval:0,apps:'',trigger:'',sources:'',steps:'',outcome:'',criteriaText:'',humanText:'',saveNext:''}}
     function initialState(){return {phase:'intro',business:'',scene:'',tasks:[blankTask(),blankTask(),blankTask()],selectedIds:[],selectionInitialized:false,deepIndex:0,resultSeen:false}}
     let state=initialState();
+    let lastViewKey=null;
     function load(){try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');if(saved&&saved.phase&&Array.isArray(saved.tasks))state=saved}catch(e){}}
     function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(e){}}
+    function viewKey(){return state.phase==='deep'?`deep:${state.deepIndex}`:state.phase}
     function setScreen(html,pct,title='차팀장 무료 업무 진단'){
+      const key=viewKey(),keepPosition=key===lastViewKey,scrollY=window.scrollY||0;
       $('#screen').innerHTML=html;
       $('#progressBar').style.width=pct+'%';
       $('#brandTitle').textContent=title;
-      window.scrollTo({top:0,behavior:'instant'});
+      window.scrollTo({top:keepPosition?scrollY:0,behavior:'auto'});
+      lastViewKey=key;
       bind();
+    }
+    function optionList(options,current,emptyLabel){
+      const values=[...options];
+      if(current&&!values.includes(current))values.unshift(current);
+      return `<option value="">${emptyLabel}</option>${values.map(value=>`<option value="${esc(value)}" ${current===value?'selected':''}>${esc(value)}</option>`).join('')}`;
     }
     function nav(nextLabel,nextDisabled=false,back=true){return `<div class="actions">${back?'<button class="btn soft" type="button" data-back>이전</button>':''}<button class="btn dark" type="button" data-next ${nextDisabled?'disabled':''}>${nextLabel}</button></div>`}
     function freqLabel(v){return FREQS.find(x=>x.v===Number(v))?.label||'빈도 미입력'}
@@ -320,10 +351,10 @@
 
     function renderScene(){
       setScreen(`<div class="panel">
-        <div class="section-head"><div class="eyebrow">01 · 내 일의 실제 장면</div><h2>먼저, 어떤 일을 하는 사람인지 알려주세요.</h2><p class="body">업종보다 중요한 건 실제로 반복되는 장면입니다. 완벽한 문장으로 쓰지 않아도 됩니다.</p></div>
+        <div class="section-head"><div class="eyebrow">01 · 내 일의 실제 장면</div><h2>먼저, 어떤 일을 하는 사람인지 알려주세요.</h2><p class="body">업무영역만 짧게 적고, 요즘 자주 겪는 장면은 가까운 답을 고르면 됩니다.</p></div>
         <div class="field"><label for="business">내 업무영역</label><input id="business" value="${esc(state.business)}" placeholder="예: 베이킹 클래스 운영 / 필라테스 회원 상담 / 콘텐츠 제작"><span class="helper">진단 결과에 내 업무영역이 그대로 표시됩니다.</span></div>
-        <div class="field"><label for="scene">요즘 자주 반복되는 하루 장면</label><textarea id="scene" placeholder="예: 오전마다 카카오 문의를 확인하고 예약표에 옮긴 뒤 가능한 시간을 다시 답장해요">${esc(state.scene)}</textarea><span class="helper">무엇을 쓰면 될까요? ‘언제 · 어디서 · 무슨 일을 반복하는지’를 적어보세요.</span></div>
-        <div class="example-bar"><button class="chipbtn" type="button" data-scene-example>예시로 먼저 채워보기</button></div>
+        <div class="field"><label for="scene">요즘 가장 자주 반복되는 장면</label><select id="scene">${optionList(SCENES,state.scene,'가장 가까운 장면을 선택하세요')}</select><span class="helper">정확히 같지 않아도 괜찮아요. 가장 비슷한 장면을 고르면 다음 질문에서 구체적으로 확인합니다.</span></div>
+        <div class="example-bar"><button class="chipbtn" type="button" data-scene-example>상담·예약 예시로 시작하기</button></div>
         ${nav('어제 한 일 적기 →',!(state.business.trim()&&state.scene.trim()))}
       </div>`,10,'내 반복업무 찾기');
     }
@@ -363,6 +394,7 @@
     }
 
     function segButtons(t,key,options){return `<div class="seg">${options.map(([label,value])=>`<button type="button" data-score-key="${key}" data-score-value="${value}" class="${Number(t[key])===value?'on':''}" aria-pressed="${Number(t[key])===value}">${label}</button>`).join('')}</div>`}
+    function diagnosisBlock(t,index,key,title,why,options){return `<div class="diagnosis-group ${index%2===0?'tone':''}"><div class="question-title"><span class="question-index">${String(index).padStart(2,'0')}</span><h3>${title}</h3></div><p>${why}</p>${segButtons(t,key,options)}</div>`}
     function renderDeep(){
       const t=currentDeepTask();
       if(!t){state.phase='select';return render()}
@@ -370,15 +402,17 @@
       setScreen(`<div class="panel">
         <div class="section-head"><div class="eyebrow">04 · 판단 근거 ${state.deepIndex+1}/${total}</div><h2>이 일이 정말 줄여볼 영역인지 확인합니다.</h2></div>
         <div class="context"><small>${esc(state.business)} · ${freqLabel(t.freq)} · 한 번 ${esc(t.minutes)}분</small><strong>${esc(t.name)}</strong></div>
-
-        <div class="diagnosis-group"><h3>처리 순서가 매번 얼마나 비슷한가요?</h3><p>순서와 결과 형식이 비슷할수록 미리 맡겨둘 부분을 떼어내기 쉽습니다.</p>${segButtons(t,'pattern',[['매번 많이 달라요',1],['절반쯤 비슷해요',3],['거의 같은 순서예요',5]])}</div>
-        <div class="diagnosis-group"><h3>같은 정보를 몇 곳에서 옮기나요?</h3><p>복사·붙여넣기와 화면 이동이 많으면 사람이 직접 할 이유가 줄어듭니다.</p>${segButtons(t,'transfer',[['한곳에서 끝나요',1],['2곳을 오가요',3],['3곳 이상 옮겨요',5]])}</div>
-        <div class="field"><label for="apps">실제로 오가는 앱·자료</label><input id="apps" value="${esc(t.apps)}" placeholder="예: 카카오채널 → 네이버 예약 → 구글 캘린더"><span class="helper">앱 이름을 몰라도 ‘문자 → 예약표 → 달력’처럼 적어도 됩니다.</span></div>
-        <div class="diagnosis-group"><h3>늦거나 빠뜨리면 어떤 영향이 있나요?</h3><p>자주 하는 일보다 놓쳤을 때 고객·매출·마감에 영향이 생기는 일을 먼저 봅니다.</p>${segButtons(t,'risk',[['조금 미뤄도 괜찮아요',1],['불편하거나 지연돼요',3],['고객·매출·마감에 영향',5]])}</div>
-        <div class="diagnosis-group"><h3>참고할 자료는 어떤 상태인가요?</h3><p>실제 예시와 자료가 디지털로 남아 있으면 더 빨리 맡겨볼 수 있습니다.</p>${segButtons(t,'data',[['머릿속·종이가 많아요',1],['디지털이지만 흩어져요',3],['한곳에 정리돼 있어요',5]])}</div>
-        <div class="diagnosis-group"><h3>판단 기준을 말로 설명할 수 있나요?</h3><p>프롬프트보다 먼저 필요한 건 ‘무엇을 보고 결정하는지’입니다.</p>${segButtons(t,'criteria',[['상황마다 감으로 해요',1],['일부 기준은 있어요',3],['체크리스트처럼 말할 수 있어요',5]])}</div>
-        <div class="diagnosis-group"><h3>예외 상황은 얼마나 자주 생기나요?</h3><p>예외가 많으면 전부 맡기기보다 초안과 정리까지만 나누는 편이 안전합니다.</p>${segButtons(t,'exceptions',[['거의 매번 달라요',5],['가끔 예외가 있어요',3],['예외가 거의 없어요',1]])}</div>
-        <div class="diagnosis-group"><h3>초안을 받은 뒤 내가 최종 확인할 수 있나요?</h3><p>사람의 확인 지점이 분명해야 안전하게 반복을 줄일 수 있습니다.</p>${segButtons(t,'approval',[['맡기기 어려워요',1],['일부는 확인 가능해요',3],['초안 후 확인하면 돼요',5]])}</div>
+        <div class="choice-guide"><b>✓ 선택만 하면 돼요</b><span>고른 답은 결과에서 ‘왜 줄여볼 일인지’의 판단 근거로 바뀝니다.</span></div>
+        <div class="diagnosis-stack">
+          ${diagnosisBlock(t,1,'pattern','처리 순서가 매번 얼마나 비슷한가요?','순서와 결과 형식이 비슷할수록 미리 맡겨둘 부분을 떼어내기 쉽습니다.',[['매번 많이 달라요',1],['절반쯤 비슷해요',3],['거의 같은 순서예요',5]])}
+          ${diagnosisBlock(t,2,'transfer','같은 정보를 몇 곳에서 옮기나요?','복사·붙여넣기와 화면 이동이 많으면 사람이 직접 할 이유가 줄어듭니다.',[['한곳에서 끝나요',1],['2곳을 오가요',3],['3곳 이상 옮겨요',5]])}
+          <div class="field" style="margin:2px 0 6px"><label for="apps">실제로 오가는 앱·자료</label><select id="apps">${optionList(APP_FLOWS,t.apps,'가장 가까운 이동 흐름을 선택하세요')}</select><span class="helper">정확한 앱 이름보다 몇 곳을 오가는지가 판단에 더 중요합니다.</span></div>
+          ${diagnosisBlock(t,3,'risk','늦거나 빠뜨리면 어떤 영향이 있나요?','자주 하는 일보다 놓쳤을 때 고객·매출·마감에 영향이 생기는 일을 먼저 봅니다.',[['조금 미뤄도 괜찮아요',1],['불편하거나 지연돼요',3],['고객·매출·마감에 영향',5]])}
+          ${diagnosisBlock(t,4,'data','참고할 자료는 어떤 상태인가요?','실제 예시와 자료가 디지털로 남아 있으면 더 빨리 맡겨볼 수 있습니다.',[['머릿속·종이가 많아요',1],['디지털이지만 흩어져요',3],['한곳에 정리돼 있어요',5]])}
+          ${diagnosisBlock(t,5,'criteria','판단 기준을 말로 설명할 수 있나요?','도구보다 먼저 필요한 건 ‘무엇을 보고 결정하는지’입니다.',[['상황마다 감으로 해요',1],['일부 기준은 있어요',3],['체크리스트처럼 말할 수 있어요',5]])}
+          ${diagnosisBlock(t,6,'exceptions','예외 상황은 얼마나 자주 생기나요?','예외가 많으면 전부 맡기기보다 초안과 정리까지만 나누는 편이 안전합니다.',[['거의 매번 달라요',5],['가끔 예외가 있어요',3],['예외가 거의 없어요',1]])}
+          ${diagnosisBlock(t,7,'approval','초안을 받은 뒤 내가 최종 확인할 수 있나요?','사람의 확인 지점이 분명해야 안전하게 반복을 줄일 수 있습니다.',[['맡기기 어려워요',1],['일부는 확인 가능해요',3],['초안 후 확인하면 돼요',5]])}
+        </div>
         ${nav(state.deepIndex===total-1?'1순위 업무 구조 잡기 →':'다음 업무 확인 →',!allDeepAnswered(t))}
       </div>`,38+Math.round((state.deepIndex+1)/Math.max(1,total)*32),'판단 근거 확인하기');
     }
@@ -395,24 +429,37 @@
     }
     function scored(){return selectedTasks().map(scoreTask).sort((a,b)=>b.priority-a.priority)}
     function topTask(){return scored()[0]}
+    function detailChoices(t){
+      const route=directionFor(t).join(' → ');
+      return {
+        trigger:['문의·주문·신청이 들어오면','정해진 시간이나 요일이 되면','파일·자료가 새로 생기면','내가 작업을 시작할 때'],
+        sources:['메시지·메일과 기존 답변','문서·표·파일에 있는 자료','예약표·캘린더의 일정','여러 화면에 흩어진 자료'],
+        outcome:['보낼 답변·문구 초안이 준비됨','정리된 표·목록이 완성됨','일정·알림 안내가 준비됨','확인할 요약·보고가 완성됨'],
+        criteriaText:['기존의 좋은 결과 예시를 기준으로','정해둔 체크리스트·규칙을 기준으로','가격표·일정표·조건표를 기준으로','상황 판단이 많아 초안까지만 맡김'],
+        steps:[route,'자료 모으기 → 유형 나누기 → 초안 → 확인 → 기록','숫자 모으기 → 비교 → 이상 표시 → 확인 → 기록','일정 확인 → 안내 초안 → 확인 → 기록'],
+        humanText:['예외·컴플레인과 최종 승인','가격·환불·조건 변경 결정','말투·고객 마음·최종 수정','사실 확인과 최종 선택'],
+        saveNext:['시트·엑셀에 저장하고 다음 확인 표시','노션·문서에 저장하고 다음 작업 연결','캘린더·예약표에 기록하고 알림 준비','메시지·업무도구에 남기고 담당자 확인']
+      };
+    }
     function renderDetail(){
       const ranked=scored();
       if(!ranked.length){state.phase='select';return render()}
       const top=taskById(ranked[0].id);
+      const choices=detailChoices(top);
       const fields=[
-        ['trigger','시작','이 일은 언제 시작되나요?','예: 카카오채널에 신규 상담 문의가 들어오면 시작해요','시작 신호가 분명해야 어디서부터 미리 맡길지 정할 수 있어요.'],
-        ['sources','자료','무엇을 보고 일하나요?','예: 고객 문의내용, 가격표, 예약 가능 시간, 기존 답변','실제 자료와 좋은 예시가 있어야 내 방식에 가까운 결과가 나옵니다.'],
-        ['outcome','결과','어떤 상태가 되면 끝난 건가요?','예: 고객에게 예약 확정 안내가 나가고 예약표에 기록된 상태','끝난 상태를 정해야 결과가 들쭉날쭉해지지 않습니다.'],
-        ['criteriaText','판단','무엇을 보고 결정하나요?','예: 당일 예약은 남은 시간을 확인하고, 환불은 이용일 3일 전까지만 가능해요','머릿속 기준을 꺼내야 같은 기준으로 초안을 만들 수 있어요.'],
-        ['steps','순서','반복되는 처리 순서를 적어보세요.','예: 문의 확인 → 유형 나누기 → 가능 시간 확인 → 답변 초안 → 예약표 기록','완벽하지 않아도 됩니다. 실제로 손이 움직이는 순서대로 적어보세요.'],
-        ['humanText','사람 확인','내가 계속 직접 판단할 부분은 무엇인가요?','예: 컴플레인 답변, 환불 결정, 가격 조정은 제가 직접 확인해요','고객의 마음·예외·최종 결정은 사람에게 남깁니다.'],
-        ['saveNext','저장·다음 행동','처리 결과는 어디에 남기고 다음엔 무엇을 하나요?','예: 상담 내용을 고객관리 시트에 저장하고 하루 뒤 미응답 고객을 확인해요','기록이 남아야 다음번에 같은 설명을 반복하지 않습니다.']
+        ['trigger','시작','이 일은 언제 시작되나요?','시작 신호가 분명해야 어디서부터 미리 맡길지 정할 수 있어요.'],
+        ['sources','자료','무엇을 보고 일하나요?','실제 자료와 좋은 예시가 있어야 내 방식에 가까운 결과가 나옵니다.'],
+        ['outcome','결과','어떤 상태가 되면 끝난 건가요?','끝난 상태를 정해야 결과가 들쭉날쭉해지지 않습니다.'],
+        ['criteriaText','판단','무엇을 보고 결정하나요?','머릿속 기준을 꺼내야 같은 기준으로 초안을 만들 수 있어요.'],
+        ['steps','순서','보통 어떤 순서로 처리하나요?','실제 손이 움직이는 순서와 가장 가까운 흐름을 고르세요.'],
+        ['humanText','사람 확인','내가 계속 직접 판단할 부분은 무엇인가요?','고객의 마음·예외·최종 결정은 사람에게 남깁니다.'],
+        ['saveNext','저장·다음 행동','처리 결과는 어디에 남기나요?','기록이 남아야 다음번에 같은 설명을 반복하지 않습니다.']
       ];
-      const flow=fields.map(([key,label,title,placeholder,help],i)=>`<div class="detail-step"><span class="detail-step-num">${i+1}</span><div class="detail-box"><label for="detail-${key}">${label} · ${title}</label><p>${help}</p><textarea id="detail-${key}" data-detail-key="${key}" placeholder="${placeholder}">${esc(top[key])}</textarea></div></div>`).join('');
+      const flow=fields.map(([key,label,title,help],i)=>`<div class="detail-step"><span class="detail-step-num">${i+1}</span><div class="detail-box"><label for="detail-${key}">${label} · ${title}</label><p>${help}</p><select id="detail-${key}" data-detail-key="${key}">${optionList(choices[key],top[key],'가장 가까운 답을 선택하세요')}</select></div></div>`).join('');
       setScreen(`<div class="panel">
-        <div class="section-head"><div class="eyebrow">05 · 1순위 업무 구조</div><h2>이제 이 일을 어디까지 맡길지 나눠봅니다.</h2><p class="body">점수만 보여주지 않고 실제 업무의 시작부터 사람 확인까지 연결합니다.</p></div>
+        <div class="section-head"><div class="eyebrow">05 · 1순위 업무 구조</div><h2>긴 글 없이, 가까운 답만 골라주세요.</h2><p class="body">선택한 7개의 답을 연결해 실제 업무의 시작부터 사람 확인까지 보여드립니다.</p></div>
         <div class="context"><small>현재 1순위 · ${esc(state.business)}</small><strong>${esc(top.name)}</strong></div>
-        <div class="example-bar"><button class="chipbtn" type="button" data-fill-detail>상담·예약 예시로 채워보기</button></div>
+        <div class="example-bar"><button class="chipbtn" type="button" data-fill-detail>이 업무의 추천값 한 번에 선택</button></div>
         <div class="detail-flow">${flow}</div>
         ${nav('내 진단 결과 보기 →',!detailComplete(top))}
       </div>`,82,'업무 구조 잡기');
@@ -464,7 +511,7 @@
         <section class="proof-section"><div class="proof-intro"><div class="eyebrow">이 구조를 먼저 배운 1기 수강생</div><h2>“흩어진 일들이<br>맞춰지는 느낌이었어요.”</h2><p class="body">좋은 말만 만든 후기가 아니라, 2026년 8월 1주차 수업 후 실제 설문 응답에서 발췌했습니다. 개인별 시간 변화는 각 수강생의 경험이며 보장 수치가 아닙니다.</p></div><div class="review-carousel">${reviewCards()}</div><p class="proof-note">원문 보기에서 사용자가 제공한 설문 화면을 확인할 수 있습니다. 의미를 바꾸지 않는 범위에서 길이만 줄였습니다.</p></section>
 
         <section class="next-ladder"><div class="eyebrow">갑자기 수업 신청이 아닙니다</div><h2>결과를 봤다면,<br>쉬운 도움부터 선택하세요.</h2>
-          <div class="ladder-step"><span class="ladder-num">1</span><div><h3>먼저 혼자 적용해보기</h3><p>복사한 결과의 1순위 업무에서 ‘자료 모으기’부터 해보세요. 차팀장 채널을 추가하면 업무를 줄이는 실제 예시와 팁을 계속 받아볼 수 있습니다.</p><a class="btn soft" href="${LINKS.kakao}" target="_blank" rel="noopener noreferrer">차팀장 무료 적용 팁 받아보기 →</a></div></div>
+          <div class="ladder-step"><span class="ladder-num">1</span><div><h3>카카오채널에서 혼자 적용해보기</h3><p>복사한 결과의 1순위 업무에서 ‘자료 모으기’부터 해보세요. 채널을 추가한 분께 혼자 따라 할 수 있는 실제 사례와 적용 팁을 이어서 드립니다.</p><a class="btn kakao" href="${LINKS.kakao}" target="_blank" rel="noopener noreferrer">카카오채널 추가하고 적용 팁 받기 →</a></div></div>
           <div class="ladder-step"><span class="ladder-num">2</span><div><h3>내 업무에 적용이 헷갈린다면</h3><p>결과 화면을 카카오채널로 보내주세요. 무엇부터 정리하면 되는지 한 가지를 무료로 짚어드립니다. 신청이나 결제를 전제로 하지 않습니다.</p><a class="btn kakao" href="${LINKS.kakao}" target="_blank" rel="noopener noreferrer">진단 결과 보내고 무료로 확인받기 →</a></div></div>
           <div class="ladder-step"><span class="ladder-num">3</span><div><h3>혼자보다 함께 완성하고 싶다면</h3><p>실제 자료로 반복해서 돌아가는 구조까지 함께 만드는 그룹과외를 운영하고 있습니다. 개별 업무를 배우는 수업도 있으며, 세부 안내는 확인 후 선택할 수 있습니다.</p><div class="help-options"><div class="help-card"><b>그룹과외</b><span>여러 업무 중 1순위를 정하고 실제로 돌아가는 구조까지 함께 완성</span></div><div class="help-card"><b>개별 업무 수업</b><span>정보를 확인한 뒤 내게 맞는지 선택 · 세부 내용은 별도 안내</span></div></div><div class="actions stack"><a class="btn dark" href="${LINKS.kakao}" target="_blank" rel="noopener noreferrer">수업이 필요한 경우에만 안내 보기 →</a></div></div></div>
         </section>
@@ -510,14 +557,18 @@
       state.tasks=rows.map(([name,minutes,freq])=>({...blankTask(),name,minutes,freq}));
     }
     function fillDetailExample(t){
+      const c=detailChoices(t),name=t.name.toLowerCase();
+      const isSchedule=/예약|일정|리마인드|노쇼/.test(name);
+      const isContent=/콘텐츠|인스타|릴스|블로그|영상|자막|보고/.test(name);
+      const isNumber=/매출|정산|재고|발주|숫자/.test(name);
       Object.assign(t,{
-        trigger:'카카오채널에 신규 상담 문의가 들어오면 시작해요',
-        sources:'고객 문의내용, 가격표, 예약 가능 시간, 이전에 보낸 좋은 답변을 참고해요',
-        outcome:'고객에게 예약 가능 시간과 다음 행동이 안내되고 상담표에 기록된 상태예요',
-        criteriaText:'당일 예약은 남은 시간을 확인하고, 가격 조정과 환불은 제가 직접 결정해요',
-        steps:'문의 확인 → 문의 유형 나누기 → 가능 시간 확인 → 답변 초안 → 사람 확인 → 상담표 기록',
-        humanText:'컴플레인 답변, 환불 결정, 가격 조정과 고객의 마음을 살피는 말은 제가 직접 확인해요',
-        saveNext:'상담 내용을 고객관리 시트에 저장하고 하루 뒤 미응답 고객을 확인해요'
+        trigger:isSchedule?c.trigger[1]:isContent||isNumber?c.trigger[3]:c.trigger[0],
+        sources:isSchedule?c.sources[2]:isContent?c.sources[1]:isNumber?c.sources[3]:c.sources[0],
+        outcome:isSchedule?c.outcome[2]:isNumber?c.outcome[1]:isContent?c.outcome[3]:c.outcome[0],
+        criteriaText:isSchedule||isNumber?c.criteriaText[2]:c.criteriaText[0],
+        steps:c.steps[0],
+        humanText:isContent?c.humanText[2]:isNumber?c.humanText[3]:c.humanText[0],
+        saveNext:isSchedule?c.saveNext[2]:isContent?c.saveNext[1]:c.saveNext[0]
       });
     }
     function resultText(){
@@ -530,8 +581,8 @@
       const backBtn=$('[data-back]');if(backBtn)backBtn.onclick=back;
       const nextBtn=$('[data-next]');if(nextBtn)nextBtn.onclick=next;
       const business=$('#business');if(business)business.oninput=()=>{state.business=business.value;save();const b=$('[data-next]');if(b)b.disabled=!(state.business.trim()&&state.scene.trim())};
-      const scene=$('#scene');if(scene)scene.oninput=()=>{state.scene=scene.value;save();const b=$('[data-next]');if(b)b.disabled=!(state.business.trim()&&state.scene.trim())};
-      const sceneEx=$('[data-scene-example]');if(sceneEx)sceneEx.onclick=()=>{if(!state.business.trim())state.business='베이킹 클래스 운영';state.scene='오전마다 카카오 문의를 확인하고 예약표에 옮긴 뒤 가능한 시간을 다시 답장해요';save();render()};
+      const scene=$('#scene');if(scene)scene.onchange=()=>{state.scene=scene.value;save();const b=$('[data-next]');if(b)b.disabled=!(state.business.trim()&&state.scene.trim())};
+      const sceneEx=$('[data-scene-example]');if(sceneEx)sceneEx.onclick=()=>{if(!state.business.trim())state.business='베이킹 클래스 운영';state.scene=SCENES[0];save();render()};
       const fillTasks=$('[data-fill-tasks]');if(fillTasks)fillTasks.onclick=()=>{examplesForBusiness();save();render()};
       const addTask=$('[data-add-task]');if(addTask)addTask.onclick=()=>{state.tasks.push(blankTask());save();render()};
       document.querySelectorAll('[data-remove-task]').forEach(b=>b.onclick=()=>{state.tasks=state.tasks.filter(t=>t.id!==b.dataset.removeTask);save();render()});
@@ -539,9 +590,14 @@
       document.querySelectorAll('[data-task-minutes]').forEach(i=>i.oninput=()=>{taskById(i.dataset.taskMinutes).minutes=Number(i.value)||'';save();const b=$('[data-next]');if(b)b.disabled=validTasks().length<3});
       document.querySelectorAll('[data-task-freq]').forEach(i=>i.onchange=()=>{taskById(i.dataset.taskFreq).freq=Number(i.value)||0;save();const b=$('[data-next]');if(b)b.disabled=validTasks().length<3});
       document.querySelectorAll('[data-toggle-task]').forEach(b=>b.onclick=()=>{const id=b.dataset.toggleTask;if(state.selectedIds.includes(id))state.selectedIds=state.selectedIds.filter(x=>x!==id);else if(state.selectedIds.length<5)state.selectedIds.push(id);save();render()});
-      document.querySelectorAll('[data-score-key]').forEach(b=>b.onclick=()=>{const t=currentDeepTask();t[b.dataset.scoreKey]=Number(b.dataset.scoreValue);save();render()});
-      const apps=$('#apps');if(apps)apps.oninput=()=>{const t=currentDeepTask();t.apps=apps.value;save();const b=$('[data-next]');if(b)b.disabled=!allDeepAnswered(t)};
-      document.querySelectorAll('[data-detail-key]').forEach(i=>i.oninput=()=>{const t=taskById(scored()[0].id);t[i.dataset.detailKey]=i.value;save();const b=$('[data-next]');if(b)b.disabled=!detailComplete(t)});
+      document.querySelectorAll('[data-score-key]').forEach(b=>b.onclick=()=>{
+        const t=currentDeepTask(),key=b.dataset.scoreKey,value=Number(b.dataset.scoreValue);
+        t[key]=value;save();
+        b.parentElement.querySelectorAll('button').forEach(choice=>{const selected=Number(choice.dataset.scoreValue)===value;choice.classList.toggle('on',selected);choice.setAttribute('aria-pressed',String(selected))});
+        const nextButton=$('[data-next]');if(nextButton)nextButton.disabled=!allDeepAnswered(t);
+      });
+      const apps=$('#apps');if(apps)apps.onchange=()=>{const t=currentDeepTask();t.apps=apps.value;save();const b=$('[data-next]');if(b)b.disabled=!allDeepAnswered(t)};
+      document.querySelectorAll('[data-detail-key]').forEach(i=>i.onchange=()=>{const t=taskById(scored()[0].id);t[i.dataset.detailKey]=i.value;save();const b=$('[data-next]');if(b)b.disabled=!detailComplete(t)});
       const fillDetail=$('[data-fill-detail]');if(fillDetail)fillDetail.onclick=()=>{fillDetailExample(taskById(scored()[0].id));save();render()};
       const copy=$('[data-copy-result]');if(copy)copy.onclick=async()=>{try{await navigator.clipboard.writeText(resultText());copy.textContent='진단 결과가 복사됐어요 ✓'}catch(e){copy.textContent='복사할 수 없어요 · 화면을 캡처해주세요'}};
       const restart=$('[data-restart]');if(restart)restart.onclick=()=>{if(confirm('입력한 진단 내용을 지우고 새로 시작할까요?')){localStorage.removeItem(STORAGE_KEY);state=initialState();render()}};
