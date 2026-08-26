@@ -1,0 +1,32 @@
+name: Fix script close v29
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-script-close-v29.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch unsafe closing script literal
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          old="html=html.replace('</body>','<script src=\"./solution-intake.js?v=29\"></script></body>');"
+          new="html=html.replace('</body>','<script src=\"./solution-intake.js?v=29\"><' + '/script></body>');"
+          if old not in s:
+              raise SystemExit('target not found')
+          p.write_text(s.replace(old,new))
+          PY
+      - name: Commit fix
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Fix bootstrap script parsing for solution consultation'
+          git push
