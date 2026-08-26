@@ -1,0 +1,51 @@
+name: Install solution consultation v29
+
+on:
+  push:
+    branches:
+      - solution-consult-v29
+    paths:
+      - solution-intake.js
+      - solution-intake.css
+      - .github/workflows/install-solution-consult-v29.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch-index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: solution-consult-v29
+      - name: Inject consultation assets into loader
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          marker = "document.open();document.write(html);document.close();"
+          if 'solution-intake.js?v=29' not in s:
+              inject = "html=html.replace('</head>','<link rel=\"stylesheet\" href=\"./solution-intake.css?v=29\"></head>');\nhtml=html.replace('</body>','<script src=\"./solution-intake.js?v=29\"></script></body>');\n"
+              if marker not in s:
+                  raise SystemExit('index injection marker not found')
+              s = s.replace(marker, inject + marker)
+          s = s.replace("const APP_VERSION='20.0.0';\",\"const APP_VERSION='28.0.0';", "const APP_VERSION='20.0.0';\",\"const APP_VERSION='29.0.0';")
+          s = s.replace("<title>차팀장 AI 직원 진단 · v20</title>','<title>차팀장 AI 직원 진단 · v28</title>", "<title>차팀장 AI 직원 진단 · v20</title>','<title>차팀장 AI 직원 진단 · v29</title>")
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit patched loader
+        shell: bash
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "No index change needed"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Connect solution consultation flow to diagnosis results"
+          git push origin HEAD:solution-consult-v29
