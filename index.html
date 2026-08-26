@@ -38,13 +38,13 @@ const v22css=String.raw`/* v22 — mobile release fix: true phone reflow + resul
   .resultV21Hero{width:100%;grid-template-columns:1fr;padding:22px 20px;gap:16px;border-radius:22px}
   .resultV21Actions{display:grid;grid-template-columns:1fr;gap:9px}
   .resultV21Actions .btn{width:100%;max-width:none}
+  .keyhint{display:none!important}
   .resultKpiV21{grid-template-columns:repeat(3,minmax(0,1fr));width:100%}
   .valueSection{padding:24px 0}
   .sectionHeadV21{grid-template-columns:1fr;gap:7px;margin-bottom:16px}
   .sectionHeadV21 h3{font-size:clamp(24px,7vw,31px)}
   .sectionHeadV21 p{font-size:12px}
 
-  /* reason number stays in col 1; title + explanation use the full readable column */
   .reasonListV21{gap:10px;border-top:0}
   .reasonItemV21{
     grid-template-columns:34px minmax(0,1fr);
@@ -59,7 +59,6 @@ const v22css=String.raw`/* v22 — mobile release fix: true phone reflow + resul
   .reasonItemV21 b{grid-column:2;grid-row:1;font-size:14px;line-height:1.45}
   .reasonItemV21 > span:not(.reasonNo){grid-column:2;grid-row:2;font-size:13px;line-height:1.62}
 
-  /* no horizontal mini-cards on phones: show the automation flow vertically */
   .buildFlowV21{display:grid;grid-template-columns:1fr;gap:6px;overflow:visible;padding:0;margin:0;width:100%}
   .flowStepV21{width:100%;min-width:0;min-height:52px;display:flex;align-items:center;justify-content:center;padding:13px 14px}
   .flowArrowV21{height:18px;justify-content:center;transform:rotate(90deg);font-size:18px}
