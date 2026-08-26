@@ -20,11 +20,14 @@ const b64=texts.join('').replace(/\s/g,'');
 const raw=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
 let html=await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
 html=html.replace("const KAKAO_CHANNEL_URL='https://open.kakao.com/o/gBzUYqri';","const KAKAO_CHANNEL_URL='http://pf.kakao.com/_xgudwX/chat';");
-html=html.replace("const APP_VERSION='20.0.0';","const APP_VERSION='24.0.0';");
-html=html.replace('<title>차팀장 AI 직원 진단 · v20</title>','<title>차팀장 AI 직원 진단 · v24</title>');
+html=html.replace("const APP_VERSION='20.0.0';","const APP_VERSION='25.0.0';");
+html=html.replace('<title>차팀장 AI 직원 진단 · v20</title>','<title>차팀장 AI 직원 진단 · v25</title>');
 html=html.replaceAll('<div class="keyhint">선택 후 <kbd>Enter</kbd>를 누르거나 <kbd>다음</kbd> 버튼을 눌러 넘어갑니다.</div>','');
-const v22css=String.raw`/* v24 — force-remove keyboard hint + mobile result readability */
+const v22css=String.raw`/* v25 — verified mobile release fixes */
 .keyhint{display:none!important}
+.resultCard > .rank > .rankmain{min-width:0!important;white-space:normal!important;text-align:left!important}
+.resultCard > .rank > .rankmain h3,.resultCard > .rank > .rankmain p{max-width:100%!important;white-space:normal!important;word-break:keep-all!important;overflow-wrap:normal!important}
+.resultCard > .rank > .candidateScore{white-space:nowrap;text-align:center}
 .resultV21{width:100%;max-width:100%;min-width:0}
 .resultV21 > *{min-width:0}
 .tomorrowV21 h3{color:#fff!important;text-shadow:0 1px 0 rgba(0,0,0,.06)}
@@ -33,10 +36,83 @@ const v22css=String.raw`/* v24 — force-remove keyboard hint + mobile result re
 .priorityRowV21{box-shadow:0 5px 14px rgba(61,39,50,.045)}
 .reasonItemV21{min-width:0}
 .reasonItemV21 b,.reasonItemV21 span{min-width:0;word-break:keep-all;overflow-wrap:normal}
+
 @media(max-width:760px){
-.resultV21{gap:20px;overflow:visible}.resultV21Hero{width:100%;grid-template-columns:1fr;padding:22px 20px;gap:16px;border-radius:22px}.resultV21Actions{display:grid;grid-template-columns:1fr;gap:9px}.resultV21Actions .btn{width:100%;max-width:none}.keyhint{display:none!important}.resultKpiV21{grid-template-columns:repeat(3,minmax(0,1fr));width:100%}.valueSection{padding:24px 0}.sectionHeadV21{grid-template-columns:1fr;gap:7px;margin-bottom:16px}.sectionHeadV21 h3{font-size:clamp(24px,7vw,31px)}.sectionHeadV21 p{font-size:12px}.reasonListV21{gap:10px;border-top:0}.reasonItemV21{grid-template-columns:34px minmax(0,1fr);gap:8px 11px;padding:15px 14px;border:1px solid #E9DFDE;border-radius:16px;background:#FFFDFB;box-shadow:0 5px 14px rgba(64,40,52,.045)}.reasonItemV21 .reasonNo{grid-column:1;grid-row:1/3;width:30px;height:30px}.reasonItemV21 b{grid-column:2;grid-row:1;font-size:14px;line-height:1.45}.reasonItemV21 > span:not(.reasonNo){grid-column:2;grid-row:2;font-size:13px;line-height:1.62}.buildFlowV21{display:grid;grid-template-columns:1fr;gap:6px;overflow:visible;padding:0;margin:0;width:100%}.flowStepV21{width:100%;min-width:0;min-height:52px;display:flex;align-items:center;justify-content:center;padding:13px 14px}.flowArrowV21{height:18px;justify-content:center;transform:rotate(90deg);font-size:18px}.buildGridV21{grid-template-columns:1fr;gap:10px;margin-top:14px}.requireBoxV21,.bottleneckBoxV21{padding:17px 16px;border-radius:16px}.priorityListV21{gap:9px}.priorityRowV21{grid-template-columns:30px minmax(0,1fr) 58px;gap:9px;padding:13px 12px;border-radius:15px}.priorityTypeV21{display:none}.priorityNameV21 span{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.45}.priorityScoreV21{width:58px;height:46px}.tomorrowV21{padding:22px 19px;border-radius:20px}.tomorrowV21 h3{font-size:clamp(25px,7.4vw,32px);line-height:1.28;letter-spacing:-.035em}.tomorrowV21 p{font-size:13px;line-height:1.62}.methodDetailsV21{border-radius:16px}.methodDetailsV21>summary{padding:15px 16px;line-height:1.45}.methodBodyV21{padding:0 12px 16px}.finalCtaV21{padding:22px 18px;border-radius:20px}.finalCtaV21 .actions{display:grid;grid-template-columns:1fr;gap:9px}.finalCtaV21 .btn{width:100%;max-width:none}}
+  .resultCard:not(.candidateCard) > .rank{grid-template-columns:30px minmax(0,1fr)!important;align-items:start!important}
+  .candidateCard > .rank{grid-template-columns:30px minmax(0,1fr) 54px!important;align-items:center!important}
+  .resultCard:not(.candidateCard) > .rank .rankmain p{font-size:12px!important;line-height:1.65!important}
+  .resultV21{gap:20px;overflow:visible}
+  .resultV21Hero{width:100%;grid-template-columns:1fr;padding:22px 20px;gap:16px;border-radius:22px}
+  .resultV21Actions{display:grid;grid-template-columns:1fr;gap:9px}
+  .resultV21Actions .btn{width:100%;max-width:none}
+  .keyhint{display:none!important}
+  .resultKpiV21{grid-template-columns:repeat(3,minmax(0,1fr));width:100%}
+  .valueSection{padding:24px 0}
+  .sectionHeadV21{grid-template-columns:1fr;gap:7px;margin-bottom:16px}
+  .sectionHeadV21 h3{font-size:clamp(24px,7vw,31px)}
+  .sectionHeadV21 p{font-size:12px}
+  .reasonListV21{gap:10px;border-top:0}
+  .reasonItemV21{grid-template-columns:34px minmax(0,1fr);gap:8px 11px;padding:15px 14px;border:1px solid #E9DFDE;border-radius:16px;background:#FFFDFB;box-shadow:0 5px 14px rgba(64,40,52,.045)}
+  .reasonItemV21 .reasonNo{grid-column:1;grid-row:1/3;width:30px;height:30px}
+  .reasonItemV21 b{grid-column:2;grid-row:1;font-size:14px;line-height:1.45}
+  .reasonItemV21 > span:not(.reasonNo){grid-column:2;grid-row:2;font-size:13px;line-height:1.62}
+  .buildFlowV21{display:grid;grid-template-columns:1fr;gap:6px;overflow:visible;padding:0;margin:0;width:100%}
+  .flowStepV21{width:100%;min-width:0;min-height:52px;display:flex;align-items:center;justify-content:center;padding:13px 14px}
+  .flowArrowV21{height:18px;justify-content:center;transform:rotate(90deg);font-size:18px}
+  .buildGridV21{grid-template-columns:1fr;gap:10px;margin-top:14px}
+  .requireBoxV21,.bottleneckBoxV21{padding:17px 16px;border-radius:16px}
+  .priorityListV21{gap:9px}
+  .priorityRowV21{grid-template-columns:30px minmax(0,1fr) 58px;gap:9px;padding:13px 12px;border-radius:15px}
+  .priorityTypeV21{display:none}
+  .priorityNameV21 span{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.45}
+  .priorityScoreV21{width:58px;height:46px}
+  .tomorrowV21{padding:22px 19px;border-radius:20px}
+  .tomorrowV21 h3{font-size:clamp(25px,7.4vw,32px);line-height:1.28;letter-spacing:-.035em}
+  .tomorrowV21 p{font-size:13px;line-height:1.62}
+  .methodDetailsV21{border-radius:16px}
+  .methodDetailsV21>summary{padding:15px 16px;line-height:1.45}
+  .methodBodyV21{padding:0 12px 16px}
+  .finalCtaV21{padding:22px 18px;border-radius:20px}
+  .finalCtaV21 .actions{display:grid;grid-template-columns:1fr;gap:9px}
+  .finalCtaV21 .btn{width:100%;max-width:none}
+}
+
 @media(max-width:460px){
-.wrap{padding:14px 12px 48px!important;max-width:100%!important}.card{width:100%;max-width:100%;padding:18px 13px!important;overflow:visible}.resultV21{gap:18px}.resultV21Hero{padding:20px 16px;border-radius:20px}.resultV21Hero h2{font-size:clamp(30px,9.4vw,40px);line-height:1.1}.resultV21Hero .heroReason{font-size:13px;line-height:1.65}.resultV21Score{grid-template-columns:1fr 1fr;gap:8px}.resultV21ScoreMain,.resultV21Type{min-height:92px;border-radius:17px}.resultV21ScoreMain strong{font-size:45px}.resultKpiV21{gap:6px}.resultKpiV21 .kpi{min-width:0;padding:11px 8px;border-radius:14px}.resultKpiV21 .kpi b{font-size:10px;line-height:1.35}.resultKpiV21 .kpi strong{font-size:21px}.valueSection{padding:21px 0}.reasonItemV21{grid-template-columns:31px minmax(0,1fr);padding:14px 12px;gap:7px 10px}.reasonItemV21 .reasonNo{width:28px;height:28px}.reasonItemV21 b{font-size:13px}.reasonItemV21 > span:not(.reasonNo){font-size:12px;line-height:1.62}.priorityRowV21{grid-template-columns:27px minmax(0,1fr) 52px;padding:12px 10px}.priorityScoreV21{width:52px;height:43px;font-size:19px}.priorityNameV21 b{font-size:13px;line-height:1.4}.priorityNameV21 span{font-size:10.5px}.tomorrowV21{padding:20px 17px}.tomorrowV21 h3{font-size:clamp(24px,7.3vw,30px)}.finalCtaV21{padding:20px 16px}.finalCtaV21 h3{font-size:clamp(24px,7.2vw,30px);line-height:1.25}.finalCtaV21 p{font-size:13px;line-height:1.65}}
+  html,body{max-width:100%;overflow-x:hidden!important}
+  .wrap,.card,#screen{max-width:100%!important;min-width:0!important}
+  .resultCard,.resultCard > .rank,.rankmain{max-width:100%!important;min-width:0!important}
+  .resultCard:not(.candidateCard) > .rank{grid-template-columns:26px minmax(0,1fr)!important;gap:9px!important}
+  .candidateCard > .rank{grid-template-columns:26px minmax(0,1fr) 52px!important;gap:9px!important}
+  .resultCard > .rank .rankmain h3{font-size:18px!important;line-height:1.3!important}
+  .resultCard > .rank .rankmain p{font-size:11.5px!important;line-height:1.6!important}
+  .wrap{padding:14px 12px 48px!important;max-width:100%!important}
+  .card{width:100%;max-width:100%;padding:18px 13px!important;overflow:visible}
+  .resultV21{gap:18px}
+  .resultV21Hero{padding:20px 16px;border-radius:20px}
+  .resultV21Hero h2{font-size:clamp(30px,9.4vw,40px);line-height:1.1}
+  .resultV21Hero .heroReason{font-size:13px;line-height:1.65}
+  .resultV21Score{grid-template-columns:1fr 1fr;gap:8px}
+  .resultV21ScoreMain,.resultV21Type{min-height:92px;border-radius:17px}
+  .resultV21ScoreMain strong{font-size:45px}
+  .resultKpiV21{gap:6px}
+  .resultKpiV21 .kpi{min-width:0;padding:11px 8px;border-radius:14px}
+  .resultKpiV21 .kpi b{font-size:10px;line-height:1.35}
+  .resultKpiV21 .kpi strong{font-size:21px}
+  .valueSection{padding:21px 0}
+  .reasonItemV21{grid-template-columns:31px minmax(0,1fr);padding:14px 12px;gap:7px 10px}
+  .reasonItemV21 .reasonNo{width:28px;height:28px}
+  .reasonItemV21 b{font-size:13px}
+  .reasonItemV21 > span:not(.reasonNo){font-size:12px;line-height:1.62}
+  .priorityRowV21{grid-template-columns:27px minmax(0,1fr) 52px;padding:12px 10px}
+  .priorityScoreV21{width:52px;height:43px;font-size:19px}
+  .priorityNameV21 b{font-size:13px;line-height:1.4}
+  .priorityNameV21 span{font-size:10.5px}
+  .tomorrowV21{padding:20px 17px}
+  .tomorrowV21 h3{font-size:clamp(24px,7.3vw,30px)}
+  .finalCtaV21{padding:20px 16px}
+  .finalCtaV21 h3{font-size:clamp(24px,7.2vw,30px);line-height:1.25}
+  .finalCtaV21 p{font-size:13px;line-height:1.65}
+}
 `;
 html=html.replace('</style>',v22css+'\n</style>');
 document.open();document.write(html);document.close();
