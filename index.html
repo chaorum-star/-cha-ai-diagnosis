@@ -19,11 +19,15 @@ const texts=await Promise.all(parts.map(n=>fetch(`./payload/part-${n}.txt`,{cach
 const b64=texts.join('').replace(/\s/g,'');
 const raw=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
 let html=await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
-html=html.replace("const KAKAO_CHANNEL_URL='https://open.kakao.com/o/gBzUYqri';","const KAKAO_CHANNEL_URL='http://pf.kakao.com/_xgudwX/chat';");
-html=html.replace("const APP_VERSION='20.0.0';","const APP_VERSION='26.0.0';");
-html=html.replace('<title>차팀장 AI 직원 진단 · v20</title>','<title>차팀장 AI 직원 진단 · v26</title>');
+html=html.replace("const KAKAO_CHANNEL_URL='https://open.kakao.com/o/gBzUYqri';","const KAKAO_CHANNEL_URL='https://pf.kakao.com/_xgudwX/chat';");
+html=html.replace("const APP_VERSION='20.0.0';","const APP_VERSION='27.0.0';");
+html=html.replace('<title>차팀장 AI 직원 진단 · v20</title>','<title>차팀장 AI 직원 진단 · v27</title>');
 html=html.replaceAll('<div class="keyhint">선택 후 <kbd>Enter</kbd>를 누르거나 <kbd>다음</kbd> 버튼을 눌러 넘어갑니다.</div>','');
-const v22css=String.raw`/* v26 — mobile bottom chrome clearance + verified result reflow */
+html=html.replace("<span class=\"tomorrowCheckV21\">□ 첫 자료 모으기</span>","<button type=\"button\" class=\"tomorrowCheckV21\" data-copy-action>내일 할 일 복사하기</button>");
+html=html.replace("async function copyClassSummary(){\n  try{await navigator.clipboard.writeText(classSummary());alert('진단 결과를 복사했습니다.');}\n  catch(e){alert('브라우저에서 복사가 제한됐습니다. 아래 요약을 길게 눌러 복사해주세요.');}\n}","function showCopyToast(message,isError=false){\n  let el=document.getElementById('copyToast');\n  if(!el){el=document.createElement('div');el.id='copyToast';document.body.appendChild(el);}\n  el.textContent=message;\n  el.className=isError?'show error':'show';\n  clearTimeout(showCopyToast._timer);\n  showCopyToast._timer=setTimeout(()=>{el.className='';},2200);\n}\nasync function copyTextSafe(text,successMessage='복사했습니다.'){\n  let ok=false;\n  try{\n    if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);ok=true;}\n  }catch(e){}\n  if(!ok){\n    const ta=document.createElement('textarea');\n    ta.value=text;\n    ta.setAttribute('readonly','');\n    ta.setAttribute('aria-hidden','true');\n    ta.style.position='fixed';ta.style.left='-9999px';ta.style.top='0';ta.style.opacity='0';\n    document.body.appendChild(ta);\n    ta.focus();ta.select();ta.setSelectionRange(0,ta.value.length);\n    try{ok=document.execCommand('copy');}catch(e){ok=false;}\n    ta.remove();\n  }\n  if(ok){showCopyToast(successMessage);return true;}\n  showCopyToast('복사가 막혔어요. 채널에서 바로 문의해 주세요.',true);\n  return false;\n}\nasync function copyClassSummary(){\n  return copyTextSafe(classSummary(),'진단 결과를 복사했어요.');\n}");
+html=html.replace("document.querySelectorAll('[data-copy]').forEach(copy=>copy.onclick=copyClassSummary);\n  const copyTop=$('[data-copy-top]'); if(copyTop)copyTop.onclick=async()=>{try{await navigator.clipboard.writeText(topDesignSummary());alert('1순위 업무 설계안을 복사했습니다.');}catch(e){alert('복사가 제한됐습니다. 전체 진단 결과 복사를 이용해주세요.');}};\n  const kakaoShare=$('[data-kakao-share]'); if(kakaoShare)kakaoShare.onclick=()=>{try{navigator.clipboard.writeText(consultationSummary()).catch(()=>{});}catch(e){} window.open(KAKAO_CHANNEL_URL,'_blank','noopener');};","document.querySelectorAll('[data-copy]').forEach(copy=>copy.onclick=copyClassSummary);\n  const copyTop=$('[data-copy-top]'); if(copyTop)copyTop.onclick=()=>copyTextSafe(topDesignSummary(),'1순위 업무 설계안을 복사했어요.');\n  const copyAction=$('[data-copy-action]'); if(copyAction)copyAction.onclick=()=>{const first=calcClass()[0];return copyTextSafe(first?firstActionFor(first.name):'최근 실제 업무 사례부터 모아보세요.','내일 할 일을 복사했어요.');};\n  const kakaoShare=$('[data-kakao-share]'); if(kakaoShare)kakaoShare.onclick=()=>{const opened=window.open(KAKAO_CHANNEL_URL,'_blank','noopener');copyTextSafe(consultationSummary(),'진단 결과를 복사했어요. 채널에 붙여넣어 주세요.');if(!opened)location.href=KAKAO_CHANNEL_URL;};");
+html=html.replace("<div class=\"ctaMicro\">상담 버튼을 누르면 진단 결과를 복사하고 차팀장 카카오톡 채널을 엽니다.</div>","<div class=\"ctaMicro\">상담 버튼을 누르면 진단 결과를 복사하고 차팀장 카카오톡 채널을 엽니다.<br><b>결과가 애매하거나 실제 적용에서 막히면, 진단 결과를 들고 차팀장 채널에 문의해주세요.</b></div>");
+const v22css=String.raw`/* v27 — mobile result + copy feedback */
 .keyhint{display:none!important}
 .resultCard > .rank > .rankmain{min-width:0!important;white-space:normal!important;text-align:left!important}
 .resultCard > .rank > .rankmain h3,.resultCard > .rank > .rankmain p{max-width:100%!important;white-space:normal!important;word-break:keep-all!important;overflow-wrap:normal!important}
@@ -36,90 +40,22 @@ const v22css=String.raw`/* v26 — mobile bottom chrome clearance + verified res
 .priorityRowV21{box-shadow:0 5px 14px rgba(61,39,50,.045)}
 .reasonItemV21{min-width:0}
 .reasonItemV21 b,.reasonItemV21 span{min-width:0;word-break:keep-all;overflow-wrap:normal}
-
+.tomorrowCheckV21{border:0;cursor:pointer;font-family:inherit;box-shadow:0 4px 0 rgba(255,255,255,.25);transition:transform .12s ease,box-shadow .12s ease}
+.tomorrowCheckV21:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(255,255,255,.18)}
+#copyToast{position:fixed;left:50%;bottom:max(28px,calc(18px + env(safe-area-inset-bottom)));z-index:9999;max-width:calc(100vw - 32px);transform:translate(-50%,16px);opacity:0;pointer-events:none;padding:12px 16px;border-radius:13px;background:#2E1632;color:#fff;font-size:13px;font-weight:800;line-height:1.45;box-shadow:0 12px 30px rgba(46,22,50,.24);transition:.2s ease;text-align:center}
+#copyToast.show{opacity:1;transform:translate(-50%,0)}
+#copyToast.error{background:#9F3428}
+.finalCtaV21 .ctaMicro b{display:inline-block;margin-top:7px;color:var(--cha-plum);font-weight:850}
 @media(max-width:760px){
-  html{scroll-padding-bottom:220px}
-  body{padding-bottom:env(safe-area-inset-bottom)}
-  .wrap{width:100%;max-width:100%!important;padding-bottom:max(220px,calc(180px + env(safe-area-inset-bottom)))!important}
-  .card,#screen{min-height:0!important;overflow:visible!important}
-  #screen>.actions:last-child{margin-bottom:30px}
-  .footer{margin-top:34px;padding-bottom:max(64px,calc(36px + env(safe-area-inset-bottom)));text-align:center}
-  .resultCard:not(.candidateCard) > .rank{grid-template-columns:30px minmax(0,1fr)!important;align-items:start!important}
-  .candidateCard > .rank{grid-template-columns:30px minmax(0,1fr) 54px!important;align-items:center!important}
-  .resultCard:not(.candidateCard) > .rank .rankmain p{font-size:12px!important;line-height:1.65!important}
-  .resultV21{gap:20px;overflow:visible}
-  .resultV21Hero{width:100%;grid-template-columns:1fr;padding:22px 20px;gap:16px;border-radius:22px}
-  .resultV21Actions{display:grid;grid-template-columns:1fr;gap:9px}
-  .resultV21Actions .btn{width:100%;max-width:none}
-  .keyhint{display:none!important}
-  .resultKpiV21{grid-template-columns:repeat(3,minmax(0,1fr));width:100%}
-  .valueSection{padding:24px 0}
-  .sectionHeadV21{grid-template-columns:1fr;gap:7px;margin-bottom:16px}
-  .sectionHeadV21 h3{font-size:clamp(24px,7vw,31px)}
-  .sectionHeadV21 p{font-size:12px}
-  .reasonListV21{gap:10px;border-top:0}
-  .reasonItemV21{grid-template-columns:34px minmax(0,1fr);gap:8px 11px;padding:15px 14px;border:1px solid #E9DFDE;border-radius:16px;background:#FFFDFB;box-shadow:0 5px 14px rgba(64,40,52,.045)}
-  .reasonItemV21 .reasonNo{grid-column:1;grid-row:1/3;width:30px;height:30px}
-  .reasonItemV21 b{grid-column:2;grid-row:1;font-size:14px;line-height:1.45}
-  .reasonItemV21 > span:not(.reasonNo){grid-column:2;grid-row:2;font-size:13px;line-height:1.62}
-  .buildFlowV21{display:grid;grid-template-columns:1fr;gap:6px;overflow:visible;padding:0;margin:0;width:100%}
-  .flowStepV21{width:100%;min-width:0;min-height:52px;display:flex;align-items:center;justify-content:center;padding:13px 14px}
-  .flowArrowV21{height:18px;justify-content:center;transform:rotate(90deg);font-size:18px}
-  .buildGridV21{grid-template-columns:1fr;gap:10px;margin-top:14px}
-  .requireBoxV21,.bottleneckBoxV21{padding:17px 16px;border-radius:16px}
-  .priorityListV21{gap:9px}
-  .priorityRowV21{grid-template-columns:30px minmax(0,1fr) 58px;gap:9px;padding:13px 12px;border-radius:15px}
-  .priorityTypeV21{display:none}
-  .priorityNameV21 span{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.45}
-  .priorityScoreV21{width:58px;height:46px}
-  .tomorrowV21{padding:22px 19px;border-radius:20px}
-  .tomorrowV21 h3{font-size:clamp(25px,7.4vw,32px);line-height:1.28;letter-spacing:-.035em}
-  .tomorrowV21 p{font-size:13px;line-height:1.62}
-  .methodDetailsV21{border-radius:16px}
-  .methodDetailsV21>summary{padding:15px 16px;line-height:1.45}
-  .methodBodyV21{padding:0 12px 16px}
-  .finalCtaV21{padding:22px 18px;border-radius:20px}
-  .finalCtaV21 .actions{display:grid;grid-template-columns:1fr;gap:9px}
-  .finalCtaV21 .btn{width:100%;max-width:none}
+  html{scroll-padding-bottom:220px}body{padding-bottom:env(safe-area-inset-bottom)}.wrap{width:100%;max-width:100%!important;padding-bottom:max(220px,calc(180px + env(safe-area-inset-bottom)))!important}.card,#screen{min-height:0!important;overflow:visible!important}#screen>.actions:last-child{margin-bottom:30px}.footer{margin-top:34px;padding-bottom:max(64px,calc(36px + env(safe-area-inset-bottom)));text-align:center}
+  .resultCard:not(.candidateCard) > .rank{grid-template-columns:30px minmax(0,1fr)!important;align-items:start!important}.candidateCard > .rank{grid-template-columns:30px minmax(0,1fr) 54px!important;align-items:center!important}.resultCard:not(.candidateCard) > .rank .rankmain p{font-size:12px!important;line-height:1.65!important}
+  .resultV21{gap:20px;overflow:visible}.resultV21Hero{width:100%;grid-template-columns:1fr;padding:22px 20px;gap:16px;border-radius:22px}.resultV21Actions{display:grid;grid-template-columns:1fr;gap:9px}.resultV21Actions .btn{width:100%;max-width:none}.resultKpiV21{grid-template-columns:repeat(3,minmax(0,1fr));width:100%}.valueSection{padding:24px 0}.sectionHeadV21{grid-template-columns:1fr;gap:7px;margin-bottom:16px}.sectionHeadV21 h3{font-size:clamp(24px,7vw,31px)}.sectionHeadV21 p{font-size:12px}
+  .reasonListV21{gap:10px;border-top:0}.reasonItemV21{grid-template-columns:34px minmax(0,1fr);gap:8px 11px;padding:15px 14px;border:1px solid #E9DFDE;border-radius:16px;background:#FFFDFB;box-shadow:0 5px 14px rgba(64,40,52,.045)}.reasonItemV21 .reasonNo{grid-column:1;grid-row:1/3;width:30px;height:30px}.reasonItemV21 b{grid-column:2;grid-row:1;font-size:14px;line-height:1.45}.reasonItemV21 > span:not(.reasonNo){grid-column:2;grid-row:2;font-size:13px;line-height:1.62}
+  .buildFlowV21{display:grid;grid-template-columns:1fr;gap:6px;overflow:visible;padding:0;margin:0;width:100%}.flowStepV21{width:100%;min-width:0;min-height:52px;display:flex;align-items:center;justify-content:center;padding:13px 14px}.flowArrowV21{height:18px;justify-content:center;transform:rotate(90deg);font-size:18px}.buildGridV21{grid-template-columns:1fr;gap:10px;margin-top:14px}.requireBoxV21,.bottleneckBoxV21{padding:17px 16px;border-radius:16px}
+  .priorityListV21{gap:9px}.priorityRowV21{grid-template-columns:30px minmax(0,1fr) 58px;gap:9px;padding:13px 12px;border-radius:15px}.priorityTypeV21{display:none}.priorityNameV21 span{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.45}.priorityScoreV21{width:58px;height:46px}.tomorrowV21{padding:22px 19px;border-radius:20px}.tomorrowV21 h3{font-size:clamp(25px,7.4vw,32px);line-height:1.28;letter-spacing:-.035em}.tomorrowV21 p{font-size:13px;line-height:1.62}.methodDetailsV21{border-radius:16px}.methodDetailsV21>summary{padding:15px 16px;line-height:1.45}.methodBodyV21{padding:0 12px 16px}.finalCtaV21{padding:22px 18px;border-radius:20px}.finalCtaV21 .actions{display:grid;grid-template-columns:1fr;gap:9px}.finalCtaV21 .btn{width:100%;max-width:none}
 }
-
 @media(max-width:460px){
-  html,body{max-width:100%;overflow-x:hidden!important}
-  .wrap,.card,#screen{max-width:100%!important;min-width:0!important}
-  .resultCard,.resultCard > .rank,.rankmain{max-width:100%!important;min-width:0!important}
-  .resultCard:not(.candidateCard) > .rank{grid-template-columns:26px minmax(0,1fr)!important;gap:9px!important}
-  .candidateCard > .rank{grid-template-columns:26px minmax(0,1fr) 52px!important;gap:9px!important}
-  .resultCard > .rank .rankmain h3{font-size:18px!important;line-height:1.3!important}
-  .resultCard > .rank .rankmain p{font-size:11.5px!important;line-height:1.6!important}
-  .wrap{padding:14px 12px max(240px,calc(195px + env(safe-area-inset-bottom)))!important;max-width:100%!important}
-  .card{width:100%;max-width:100%;padding:18px 13px!important;overflow:visible}
-  .resultV21{gap:18px}
-  .resultV21Hero{padding:20px 16px;border-radius:20px}
-  .resultV21Hero h2{font-size:clamp(30px,9.4vw,40px);line-height:1.1}
-  .resultV21Hero .heroReason{font-size:13px;line-height:1.65}
-  .resultV21Score{grid-template-columns:1fr 1fr;gap:8px}
-  .resultV21ScoreMain,.resultV21Type{min-height:92px;border-radius:17px}
-  .resultV21ScoreMain strong{font-size:45px}
-  .resultKpiV21{gap:6px}
-  .resultKpiV21 .kpi{min-width:0;padding:11px 8px;border-radius:14px}
-  .resultV21 .kpi b{font-size:10px;line-height:1.35}
-  .resultKpiV21 .kpi strong{font-size:21px}
-  .valueSection{padding:21px 0}
-  .reasonItemV21{grid-template-columns:31px minmax(0,1fr);padding:14px 12px;gap:7px 10px}
-  .reasonItemV21 .reasonNo{width:28px;height:28px}
-  .reasonItemV21 b{font-size:13px}
-  .reasonItemV21 > span:not(.reasonNo){font-size:12px;line-height:1.62}
-  .priorityRowV21{grid-template-columns:27px minmax(0,1fr) 52px;padding:12px 10px}
-  .priorityScoreV21{width:52px;height:43px;font-size:19px}
-  .priorityNameV21 b{font-size:13px;line-height:1.4}
-  .priorityNameV21 span{font-size:10.5px}
-  .tomorrowV21{padding:20px 17px}
-  .tomorrowV21 h3{font-size:clamp(24px,7.3vw,30px)}
-  .finalCtaV21{padding:20px 16px;margin-bottom:18px}
-  .finalCtaV21 h3{font-size:clamp(24px,7.2vw,30px);line-height:1.25}
-  .finalCtaV21 p{font-size:13px;line-height:1.65}
-  .nextCandidates{margin-bottom:32px}
-  .cta{margin-bottom:24px}
+  html,body{max-width:100%;overflow-x:hidden!important}.wrap,.card,#screen{max-width:100%!important;min-width:0!important}.resultCard,.resultCard > .rank,.rankmain{max-width:100%!important;min-width:0!important}.resultCard:not(.candidateCard) > .rank{grid-template-columns:26px minmax(0,1fr)!important;gap:9px!important}.candidateCard > .rank{grid-template-columns:26px minmax(0,1fr) 52px!important;gap:9px!important}.resultCard > .rank .rankmain h3{font-size:18px!important;line-height:1.3!important}.resultCard > .rank .rankmain p{font-size:11.5px!important;line-height:1.6!important}.wrap{padding:14px 12px max(240px,calc(195px + env(safe-area-inset-bottom)))!important;max-width:100%!important}.card{width:100%;max-width:100%;padding:18px 13px!important;overflow:visible}.resultV21{gap:18px}.resultV21Hero{padding:20px 16px;border-radius:20px}.resultV21Hero h2{font-size:clamp(30px,9.4vw,40px);line-height:1.1}.resultV21Hero .heroReason{font-size:13px;line-height:1.65}.resultV21Score{grid-template-columns:1fr 1fr;gap:8px}.resultV21ScoreMain,.resultV21Type{min-height:92px;border-radius:17px}.resultV21ScoreMain strong{font-size:45px}.resultKpiV21{gap:6px}.resultKpiV21 .kpi{min-width:0;padding:11px 8px;border-radius:14px}.resultKpiV21 .kpi b{font-size:10px;line-height:1.35}.resultKpiV21 .kpi strong{font-size:21px}.valueSection{padding:21px 0}.reasonItemV21{grid-template-columns:31px minmax(0,1fr);padding:14px 12px;gap:7px 10px}.reasonItemV21 .reasonNo{width:28px;height:28px}.reasonItemV21 b{font-size:13px}.reasonItemV21 > span:not(.reasonNo){font-size:12px;line-height:1.62}.priorityRowV21{grid-template-columns:27px minmax(0,1fr) 52px;padding:12px 10px}.priorityScoreV21{width:52px;height:43px;font-size:19px}.priorityNameV21 b{font-size:13px;line-height:1.4}.priorityNameV21 span{font-size:10.5px}.tomorrowV21{padding:20px 17px}.tomorrowV21 h3{font-size:clamp(24px,7.3vw,30px)}.finalCtaV21{padding:20px 16px;margin-bottom:18px}.finalCtaV21 h3{font-size:clamp(24px,7.2vw,30px);line-height:1.25}.finalCtaV21 p{font-size:13px;line-height:1.65}.nextCandidates{margin-bottom:32px}.cta{margin-bottom:24px}
 }
 `;
 html=html.replace('</style>',v22css+'\n</style>');
