@@ -20,10 +20,10 @@ const b64=texts.join('').replace(/\s/g,'');
 const raw=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
 let html=await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
 html=html.replace("const KAKAO_CHANNEL_URL='https://open.kakao.com/o/gBzUYqri';","const KAKAO_CHANNEL_URL='http://pf.kakao.com/_xgudwX/chat';");
-html=html.replace("const APP_VERSION='20.0.0';","const APP_VERSION='25.0.0';");
-html=html.replace('<title>차팀장 AI 직원 진단 · v20</title>','<title>차팀장 AI 직원 진단 · v25</title>');
+html=html.replace("const APP_VERSION='20.0.0';","const APP_VERSION='26.0.0';");
+html=html.replace('<title>차팀장 AI 직원 진단 · v20</title>','<title>차팀장 AI 직원 진단 · v26</title>');
 html=html.replaceAll('<div class="keyhint">선택 후 <kbd>Enter</kbd>를 누르거나 <kbd>다음</kbd> 버튼을 눌러 넘어갑니다.</div>','');
-const v22css=String.raw`/* v25 — verified mobile release fixes */
+const v22css=String.raw`/* v26 — mobile bottom chrome clearance + verified result reflow */
 .keyhint{display:none!important}
 .resultCard > .rank > .rankmain{min-width:0!important;white-space:normal!important;text-align:left!important}
 .resultCard > .rank > .rankmain h3,.resultCard > .rank > .rankmain p{max-width:100%!important;white-space:normal!important;word-break:keep-all!important;overflow-wrap:normal!important}
@@ -38,6 +38,12 @@ const v22css=String.raw`/* v25 — verified mobile release fixes */
 .reasonItemV21 b,.reasonItemV21 span{min-width:0;word-break:keep-all;overflow-wrap:normal}
 
 @media(max-width:760px){
+  html{scroll-padding-bottom:220px}
+  body{padding-bottom:env(safe-area-inset-bottom)}
+  .wrap{width:100%;max-width:100%!important;padding-bottom:max(220px,calc(180px + env(safe-area-inset-bottom)))!important}
+  .card,#screen{min-height:0!important;overflow:visible!important}
+  #screen>.actions:last-child{margin-bottom:30px}
+  .footer{margin-top:34px;padding-bottom:max(64px,calc(36px + env(safe-area-inset-bottom)));text-align:center}
   .resultCard:not(.candidateCard) > .rank{grid-template-columns:30px minmax(0,1fr)!important;align-items:start!important}
   .candidateCard > .rank{grid-template-columns:30px minmax(0,1fr) 54px!important;align-items:center!important}
   .resultCard:not(.candidateCard) > .rank .rankmain p{font-size:12px!important;line-height:1.65!important}
@@ -85,7 +91,7 @@ const v22css=String.raw`/* v25 — verified mobile release fixes */
   .candidateCard > .rank{grid-template-columns:26px minmax(0,1fr) 52px!important;gap:9px!important}
   .resultCard > .rank .rankmain h3{font-size:18px!important;line-height:1.3!important}
   .resultCard > .rank .rankmain p{font-size:11.5px!important;line-height:1.6!important}
-  .wrap{padding:14px 12px 48px!important;max-width:100%!important}
+  .wrap{padding:14px 12px max(240px,calc(195px + env(safe-area-inset-bottom)))!important;max-width:100%!important}
   .card{width:100%;max-width:100%;padding:18px 13px!important;overflow:visible}
   .resultV21{gap:18px}
   .resultV21Hero{padding:20px 16px;border-radius:20px}
@@ -96,7 +102,7 @@ const v22css=String.raw`/* v25 — verified mobile release fixes */
   .resultV21ScoreMain strong{font-size:45px}
   .resultKpiV21{gap:6px}
   .resultKpiV21 .kpi{min-width:0;padding:11px 8px;border-radius:14px}
-  .resultKpiV21 .kpi b{font-size:10px;line-height:1.35}
+  .resultV21 .kpi b{font-size:10px;line-height:1.35}
   .resultKpiV21 .kpi strong{font-size:21px}
   .valueSection{padding:21px 0}
   .reasonItemV21{grid-template-columns:31px minmax(0,1fr);padding:14px 12px;gap:7px 10px}
@@ -109,9 +115,11 @@ const v22css=String.raw`/* v25 — verified mobile release fixes */
   .priorityNameV21 span{font-size:10.5px}
   .tomorrowV21{padding:20px 17px}
   .tomorrowV21 h3{font-size:clamp(24px,7.3vw,30px)}
-  .finalCtaV21{padding:20px 16px}
+  .finalCtaV21{padding:20px 16px;margin-bottom:18px}
   .finalCtaV21 h3{font-size:clamp(24px,7.2vw,30px);line-height:1.25}
   .finalCtaV21 p{font-size:13px;line-height:1.65}
+  .nextCandidates{margin-bottom:32px}
+  .cta{margin-bottom:24px}
 }
 `;
 html=html.replace('</style>',v22css+'\n</style>');
