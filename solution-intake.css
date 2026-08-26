@@ -1,0 +1,26 @@
+.solutionConsultCardV29{margin:8px 0 22px;padding:24px 22px;border:1px solid #E9DFDE;border-radius:20px;background:linear-gradient(145deg,#FFFDFB,#FFF7F2);box-shadow:0 8px 24px rgba(64,40,52,.06)}
+.solutionConsultCardV29 h3{margin:6px 0 10px;font-size:clamp(24px,5vw,31px);line-height:1.25;letter-spacing:-.04em;color:#2E1632}
+.solutionConsultCardV29 p{margin:0;color:#675D67;font-size:13px;line-height:1.72;word-break:keep-all}
+.solutionEyebrowV29{font-size:11px;font-weight:900;letter-spacing:.06em;color:#E45E4B;text-transform:uppercase}
+.solutionMiniFlowV29{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin:16px 0 18px}
+.solutionMiniFlowV29 span{padding:7px 9px;border-radius:999px;background:#F4ECE9;color:#4E3D4D;font-size:11px;font-weight:800}
+.solutionMiniFlowV29 i{font-style:normal;color:#B6A6AE;font-size:11px}
+.solutionConsultBtnV29,.solutionSubmitV29{width:100%;border:0;border-radius:14px;background:#2E1632;color:#fff;padding:15px 16px;min-height:52px;font-family:inherit;font-size:14px;font-weight:900;line-height:1.35;cursor:pointer;box-shadow:0 6px 16px rgba(46,22,50,.18)}
+.solutionConsultBtnV29:active,.solutionSubmitV29:active{transform:translateY(1px)}
+.solutionModalV29{position:fixed;inset:0;z-index:10050;background:rgba(28,20,28,.58);backdrop-filter:blur(6px);display:flex;align-items:flex-start;justify-content:center;padding:24px 14px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.solutionDialogV29{position:relative;width:min(620px,100%);margin:auto;background:#FFFDFB;border-radius:24px;padding:28px 24px 26px;box-shadow:0 28px 70px rgba(25,15,25,.28);color:#211A25}
+.solutionDialogV29 h2{margin:8px 34px 10px 0;font-size:clamp(28px,7vw,38px);line-height:1.18;letter-spacing:-.045em;color:#2E1632}
+.solutionLeadV29{margin:0;color:#6F656F;font-size:13px;line-height:1.7;word-break:keep-all}
+.solutionCloseV29{position:absolute;right:16px;top:15px;width:38px;height:38px;border:0;border-radius:12px;background:#F3ECEF;color:#5C4C58;font-size:25px;line-height:1;cursor:pointer}
+.solutionTopTaskV29{margin:18px 0 20px;padding:14px 15px;border-radius:15px;background:#FFF0EC;border:1px solid #F2D9D3}
+.solutionTopTaskV29 span{display:block;margin-bottom:4px;color:#A36559;font-size:10px;font-weight:900;letter-spacing:.04em}
+.solutionTopTaskV29 b{display:block;font-size:16px;line-height:1.45;color:#3A2937;word-break:keep-all}
+.solutionFieldV29{display:block;margin:0 0 17px}
+.solutionFieldV29>span{display:block;margin:0 0 8px;font-size:13px;font-weight:850;line-height:1.5;color:#3C303A;word-break:keep-all}
+.solutionFieldV29>span b{color:#E45E4B}
+.solutionFieldV29 input,.solutionFieldV29 textarea,.solutionFieldV29 select{display:block;width:100%;box-sizing:border-box;border:1.5px solid #E2DADB;border-radius:13px;background:#fff;color:#2B202A;padding:13px 14px;font-family:inherit;font-size:15px;line-height:1.5;outline:0;appearance:none;-webkit-appearance:none}
+.solutionFieldV29 textarea{min-height:98px;resize:vertical}
+.solutionFieldV29 input:focus,.solutionFieldV29 textarea:focus,.solutionFieldV29 select:focus{border-color:#8D5A83;box-shadow:0 0 0 3px rgba(141,90,131,.1)}
+.solutionFieldV29 input::placeholder,.solutionFieldV29 textarea::placeholder{color:#A69DA3}
+.solutionPrivacyV29{margin:4px 0 13px;padding:12px 13px;border-radius:12px;background:#F5F1F2;color:#776D74;font-size:11px;line-height:1.55;word-break:keep-all}
+@media(max-width:520px){.solutionConsultCardV29{padding:21px 17px;border-radius:18px}.solutionConsultCardV29 h3{font-size:25px}.solutionMiniFlowV29{gap:5px}.solutionMiniFlowV29 span{font-size:10px;padding:6px 8px}.solutionModalV29{padding:12px 10px 24px}.solutionDialogV29{padding:24px 17px 22px;border-radius:20px}.solutionDialogV29 h2{font-size:30px}.solutionFieldV29 textarea{min-height:92px}.solutionConsultBtnV29,.solutionSubmitV29{font-size:13px;padding:14px 13px}}
