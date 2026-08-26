@@ -61,7 +61,7 @@ const v22css=String.raw`/* v28 — mobile fixes */
 `;
 html=html.replace('</style>',v22css+'\n</style>');
 html=html.replace('</head>','<link rel="stylesheet" href="./solution-intake.css?v=29"></head>');
-html=html.replace('</body>','<script src="./solution-intake.js?v=29"></script></body>');
+html=html.replace('</body>','<script src="./solution-intake.js?v=29"><' + '/script></body>');
 document.open();document.write(html);document.close();
 }catch(e){document.getElementById('boot').innerHTML='<div><b>페이지를 불러오지 못했어요.</b><span>Safari에서 새로고침해 주세요.</span></div>';console.error(e)}
 })();
