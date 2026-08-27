@@ -23,4 +23,35 @@
 .solutionFieldV29 input:focus,.solutionFieldV29 textarea:focus,.solutionFieldV29 select:focus{border-color:#8D5A83;box-shadow:0 0 0 3px rgba(141,90,131,.1)}
 .solutionFieldV29 input::placeholder,.solutionFieldV29 textarea::placeholder{color:#A69DA3}
 .solutionPrivacyV29{margin:4px 0 13px;padding:12px 13px;border-radius:12px;background:#F5F1F2;color:#776D74;font-size:11px;line-height:1.55;word-break:keep-all}
-@media(max-width:520px){.solutionConsultCardV29{padding:21px 17px;border-radius:18px}.solutionConsultCardV29 h3{font-size:25px}.solutionMiniFlowV29{gap:5px}.solutionMiniFlowV29 span{font-size:10px;padding:6px 8px}.solutionModalV29{padding:12px 10px 24px}.solutionDialogV29{padding:24px 17px 22px;border-radius:20px}.solutionDialogV29 h2{font-size:30px}.solutionFieldV29 textarea{min-height:92px}.solutionConsultBtnV29,.solutionSubmitV29{font-size:13px;padding:14px 13px}}
+
+.diagnosisNextStepV30{margin:8px 0 22px;padding:25px 22px;border:1px solid #E6DCDD;border-radius:20px;background:#FFFDFB;box-shadow:0 8px 24px rgba(64,40,52,.055)}
+.diagnosisNextStepV30 h3{margin:7px 0 10px;font-size:clamp(25px,5.2vw,32px);line-height:1.24;letter-spacing:-.045em;color:#2E1632}
+.nextStepLeadV30{margin:0;color:#675D67;font-size:13px;line-height:1.72;word-break:keep-all}
+.nextStepLeadV30 b{color:#3A2937}
+.nextStepListV30{display:grid;gap:10px;margin:19px 0}
+.nextStepItemV30{display:grid;grid-template-columns:34px minmax(0,1fr);gap:11px;padding:15px 14px;border:1px solid #ECE3E2;border-radius:16px;background:#FFF9F6}
+.nextStepItemV30>span{width:30px;height:30px;border-radius:10px;background:#2E1632;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:900}
+.nextStepItemV30 b{display:block;margin:1px 0 4px;color:#30242E;font-size:14px;line-height:1.45}
+.nextStepItemV30 p{margin:0;color:#746A72;font-size:12.5px;line-height:1.6;word-break:keep-all}
+.nextStepItemV30 strong{color:#4B3547}
+.todayActionV30{padding:16px;border-radius:17px;background:linear-gradient(145deg,#2E1632,#4C294A);color:#fff}
+.todayActionV30 small{display:block;margin-bottom:5px;color:#F6C5BA;font-size:10px;font-weight:900;letter-spacing:.05em}
+.todayActionV30>b{display:block;margin-bottom:13px;font-size:15px;line-height:1.55;word-break:keep-all}
+.todayActionV30 button{width:100%;border:0;border-radius:13px;background:#fff;color:#2E1632;padding:13px 14px;min-height:48px;font-family:inherit;font-size:13px;font-weight:900;line-height:1.35;cursor:pointer}
+.todayActionV30 button:active{transform:translateY(1px)}
+.copyHowToV30{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:10px;padding:10px 11px;border-radius:12px;background:rgba(255,255,255,.1);color:#F8EFF6;font-size:10.5px;line-height:1.5;word-break:keep-all}
+.copyHowToV30 b{color:#fff;font-size:11px}
+.copyHowToV30 i{font-style:normal;opacity:.55}
+.copyHowToV30.compact{display:block}
+.copyHowToV30.compact b{display:block;margin-bottom:3px}
+.copyHowToV30.compact span{color:#F4E7F0}
+.tomorrowV21 .copyHowToV30{background:rgba(255,255,255,.14);color:#fff}
+.tomorrowV21 .copyHowToV30 b,.tomorrowV21 .copyHowToV30 span{color:#fff}
+
+@media(max-width:520px){
+  .solutionConsultCardV29,.diagnosisNextStepV30{padding:21px 17px;border-radius:18px}
+  .solutionConsultCardV29 h3,.diagnosisNextStepV30 h3{font-size:25px}
+  .solutionMiniFlowV29{gap:5px}.solutionMiniFlowV29 span{font-size:10px;padding:6px 8px}
+  .solutionModalV29{padding:12px 10px 24px}.solutionDialogV29{padding:24px 17px 22px;border-radius:20px}.solutionDialogV29 h2{font-size:30px}.solutionFieldV29 textarea{min-height:92px}.solutionConsultBtnV29,.solutionSubmitV29{font-size:13px;padding:14px 13px}
+  .nextStepItemV30{grid-template-columns:31px minmax(0,1fr);gap:9px;padding:14px 12px}.nextStepItemV30>span{width:28px;height:28px}.nextStepItemV30 p{font-size:12px}.todayActionV30{padding:15px 13px}.todayActionV30 button{font-size:12.5px;padding:12px}.copyHowToV30{font-size:10px}
+}
