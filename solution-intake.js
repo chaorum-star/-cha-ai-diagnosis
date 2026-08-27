@@ -69,6 +69,8 @@
   function enhanceCopyAction(){
     const btn=document.querySelector('[data-copy-action]');
     if(!btn) return;
+    if(btn.dataset.copyGuideV30==='1') return;
+    btn.dataset.copyGuideV30='1';
     btn.textContent='ChatGPT에 붙여넣을 시작문장 복사하기';
     btn.setAttribute('aria-label','AI 직원 구축 시작문장 복사하기');
     btn.onclick=copyStarterPrompt;
@@ -98,18 +100,14 @@
         <div class="nextStepItemV30"><span>2</span><div><b>내 판단 기준 3~5개 적기</b><p>“이럴 땐 이렇게 처리한다”처럼 반복해서 쓰는 기준만 먼저 적어보세요.</p></div></div>
         <div class="nextStepItemV30"><span>3</span><div><b>AI와 사람의 역할 나누기</b><p>처음부터 전부 자동화하지 말고 <strong>AI 초안 → 사람 확인 → 실행</strong> 범위를 정하세요.</p></div></div>
       </div>
-      <div class="todayActionV30">
-        <small>오늘 하나만 한다면</small>
-        <b>${esc(firstAction)}</b>
-        <button type="button" data-starter-copy>ChatGPT에 붙여넣을 시작문장 복사하기</button>
-        <div class="copyHowToV30 compact"><b>복사한 다음엔?</b><span>ChatGPT·Claude에 붙여넣기 → 내 자료 추가 → 실행 순서 구체화</span></div>
-      </div>`;
+      <div class="nextStepBridgeV30"><b>첫 행동은 바로 아래에서 시작하세요.</b><span>복사 버튼에는 ChatGPT·Claude에 붙여넣을 시작문장까지 담아뒀어요.</span></div>`;
+    const tomorrow=result.querySelector('.tomorrowV21');
     const consult=document.getElementById('solutionConsultCardV29');
     const finalCta=result.querySelector('.finalCtaV21');
-    if(consult) result.insertBefore(card,consult);
+    if(tomorrow) result.insertBefore(card,tomorrow);
+    else if(consult) result.insertBefore(card,consult);
     else if(finalCta) result.insertBefore(card,finalCta);
     else result.appendChild(card);
-    card.querySelector('[data-starter-copy]').onclick=copyStarterPrompt;
   }
 
   function closeModal(){
