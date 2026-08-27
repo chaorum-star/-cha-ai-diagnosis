@@ -34,6 +34,8 @@
 .nextStepItemV30 b{display:block;margin:1px 0 4px;color:#30242E;font-size:14px;line-height:1.45}
 .nextStepItemV30 p{margin:0;color:#746A72;font-size:12.5px;line-height:1.6;word-break:keep-all}
 .nextStepItemV30 strong{color:#4B3547}
+.nextStepBridgeV30{display:grid;gap:3px;margin-top:13px;padding:12px 13px;border-radius:13px;background:#F3EDF1;color:#5F5160;font-size:11px;line-height:1.55;word-break:keep-all}
+.nextStepBridgeV30 b{color:#382B37;font-size:12px}
 .todayActionV30{padding:16px;border-radius:17px;background:linear-gradient(145deg,#2E1632,#4C294A);color:#fff}
 .todayActionV30 small{display:block;margin-bottom:5px;color:#F6C5BA;font-size:10px;font-weight:900;letter-spacing:.05em}
 .todayActionV30>b{display:block;margin-bottom:13px;font-size:15px;line-height:1.55;word-break:keep-all}
