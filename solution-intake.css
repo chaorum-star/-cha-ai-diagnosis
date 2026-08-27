@@ -50,6 +50,22 @@
 .tomorrowV21 .copyHowToV30{background:rgba(255,255,255,.14);color:#fff}
 .tomorrowV21 .copyHowToV30 b,.tomorrowV21 .copyHowToV30 span{color:#fff}
 
+/* v31 — quick-result mobile rank containment */
+@media(max-width:760px){
+  .resultCard,.candidateCard{max-width:100%!important;min-width:0!important;box-sizing:border-box!important;overflow:hidden!important}
+  .resultCard > .rank,.candidateCard > .rank{display:grid!important;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;margin-left:0!important;margin-right:0!important;transform:none!important}
+  .resultCard:not(.candidateCard) > .rank{grid-template-columns:32px minmax(0,1fr)!important;gap:10px!important;align-items:start!important}
+  .candidateCard > .rank{grid-template-columns:34px minmax(0,1fr) 58px!important;gap:10px!important;align-items:center!important}
+  .resultCard > .rank > :first-child,.candidateCard > .rank > :first-child{position:static!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;transform:none!important;margin:0!important;justify-self:start!important;align-self:start!important;max-width:100%!important}
+  .resultCard > .rank > .rankmain,.candidateCard > .rank > .rankmain{min-width:0!important;max-width:100%!important;overflow:visible!important}
+  .candidateCard > .rank > .candidateScore{position:static!important;right:auto!important;transform:none!important;justify-self:end!important;align-self:center!important;margin:0!important;max-width:58px!important;box-sizing:border-box!important}
+}
+@media(max-width:460px){
+  .resultCard:not(.candidateCard) > .rank{grid-template-columns:28px minmax(0,1fr)!important;gap:9px!important}
+  .candidateCard > .rank{grid-template-columns:30px minmax(0,1fr) 54px!important;gap:8px!important}
+  .candidateCard > .rank > .candidateScore{max-width:54px!important}
+}
+
 @media(max-width:520px){
   .solutionConsultCardV29,.diagnosisNextStepV30{padding:21px 17px;border-radius:18px}
   .solutionConsultCardV29 h3,.diagnosisNextStepV30 h3{font-size:25px}
